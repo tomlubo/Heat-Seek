@@ -49,7 +49,7 @@ In the connection diagram below notice the two pullup resistors!
 #define TX_BUFFER_SIZE 30 //Size of the I2C TX and UART RX buffer
 #define RX_BUFFER_SIZE 64 //Size of the I2C RX buffer
 
-#define I2CTIMEOUTCOUNT 10000000
+#define I2CTIMEOUTCOUNT 50000000
 
 //I2C State Machine Modes
 typedef enum I2C_ModeEnum{
@@ -171,6 +171,17 @@ void motorControl(uint8_t direction, uint8_t magnitude) {
             P1OUT |= (MOTOR_A_FWD | MOTOR_A_REV);
             P2OUT |= (MOTOR_B_FWD | MOTOR_B_REV);
             break;
+
+    }
+    if (magnitude <=32) {
+        P1OUT |= MOTOR_A_FWD;  // Enable PWM forward by setting pin high
+        P1OUT &= ~MOTOR_A_REV;
+
+        P2OUT |= MOTOR_B_FWD;  // Enable PWM forward by setting pin high
+        P2OUT &= ~MOTOR_B_REV; // Ensure reverse direction pin is low
+
+        delayVariable(10000);
+        motorStop();
     }
 }
 
@@ -364,6 +375,13 @@ uint8_t ProcessUart(uint8_t *SlaveAddress, uint16_t *RegAddress, uint16_t *Value
 
             }
 
+
+
+
+        }
+        if(LocalIndex >= 4)//If we received at least 8 characters
+                {
+
             if(g_UartReceiveBuffer[LocalIndex] == 'n' &&
                  g_UartReceiveBuffer[LocalIndex - 1] == 'r' &&
                  g_UartReceiveBuffer[LocalIndex - 2] == 't')
@@ -372,10 +390,9 @@ uint8_t ProcessUart(uint8_t *SlaveAddress, uint16_t *RegAddress, uint16_t *Value
                   magnitude = g_UartReceiveBuffer[LocalIndex - 4];
                   UartCommand = 3; // Indicate that a turn command was received
                   }
+         }
 
 
-
-        }
         LocalIndex++;
 
         if((LocalIndex >= TX_BUFFER_SIZE) || (LocalIndex > g_UartReceiveIndex))
