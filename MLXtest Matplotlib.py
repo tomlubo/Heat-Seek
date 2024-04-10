@@ -31,12 +31,12 @@ loop = 0
 try:
     while True:
         # Calculate temperature values from MLX RAM
-        floatarray = np.array([[sensor.getCompensatedPixDataRAM(i+1, j+1) for i in range(24)] for j in range(32)])
-        #floatarray = floatarray[2:][2:]
+        floatarray = np.array([[sensor.getCompensatedPixDataRAM(i+1, j+1) for i in range(24)] for j in range(30)])
+
         floatarray = floatarray.T
         floatarray = gaussian_filter(floatarray, sigma=2)
         
-        sections = 32  # Adjusted for the trimmed frame
+        sections = 30  # Adjusted for the trimmed frame
         min_temp_for_tracking = 25  # Minimum temperature for tracking people
         max_temp_for_tracking = 37  # Maximum temperature to avoid artifacts
         
