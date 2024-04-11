@@ -61,8 +61,8 @@ try:
             distance_from_center = max_section_index - center_section_index
             
             # Magnitude calculation adapted for the trimmed frame
-            magnitude = int(abs(distance_from_center) / (sections // 2) * 255)
-            magnitude = min(magnitude, 256)
+            magnitude = int(abs(distance_from_center) / (sections // 2) * 128)
+            magnitude = min(magnitude, 128)
             
             direction = 0 if distance_from_center < 0 else 1
             
